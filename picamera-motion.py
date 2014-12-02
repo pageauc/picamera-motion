@@ -1,15 +1,17 @@
 #!/usr/bin/python
 #
 #     Lightweight Motion Detection using python picamera libraries
-#           based on code from raspberry pi forum user utpalc
+#        based on code from raspberry pi forum by user utpalc
+#        modified by Claude Pageau for this working example
 #     ------------------------------------------------------------
 # original code on github https://github.com/pageauc/picamera-motion
 
+# This is sample code that can be used for further development
 
 verbose = True
 if verbose:
     print "Loading python libraries ....."
-else
+else:
     print "verbose output has been disabled verbose=False"
 
 import picamera
@@ -26,14 +28,18 @@ SECONDS2MICRO = 1000000  # Constant for converting Shutter Speed in Seconds to M
 
 # User Customizable Settings
 imageDir = "images"
-imageNamePrefix = 'front-'  # Prefix for all image file names. Eg front-
+imagePath = "/home/pi/picamera-motion/" + imageDir
+imageNamePrefix = 'capture-'  # Prefix for all image file names. Eg front-
 imageWidth = 1980
 imageHeight = 1080
 imageVFlip = False   # Flip image Vertically
 imageHFlip = False   # Flip image Horizontally
+imagePreview = False
 
-motionThreshold = 25
-motionSensitivity = 25
+numberSequence = False
+
+threshold = 10  # How Much pixel changes
+sensitivity = 100  # How many pixels change
 
 nightISO = 800
 nightShutSpeed = 6 * SECONDS2MICRO  # seconds times conversion to microseconds constant
@@ -60,7 +66,7 @@ def checkImagePath(imagedir):
 
 def takeDayImage(imageWidth, imageHeight, filename):
     if verbose:
-        print "takeDayImage      - Working ....."
+        print "takeDayImage - Working ....."
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
@@ -73,12 +79,12 @@ def takeDayImage(imageWidth, imageHeight, filename):
         camera.awb_mode = 'auto'
         camera.capture(filename)
     if verbose:  
-        print "takeDayImage      - Captured %s" % (filename)
-    return fileName
+        print "takeDayImage - Captured %s" % (filename)
+    return filename
 
 def takeNightImage(imageWidth, imageHeight, filename):
     if verbose:
-        print "takeNightImage      - Working ....."
+        print "takeNightImage - Working ....."
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         if imagePreview:
@@ -96,10 +102,10 @@ def takeNightImage(imageWidth, imageHeight, filename):
         # Give the camera a good long time to measure AWB
         # (you may wish to use fixed AWB instead)
         time.sleep(10)
-        camera.capture(fileName)
+        camera.capture(filename)
     if verbose:  
-        print "checkNightMode    - Captured %s" % (filename)
-    return fileName
+        print "checkNightMode - Captured %s" % (filename)
+    return filename
 
 def takeMotionImage(width, height, daymode):
     with picamera.PiCamera() as camera:
@@ -127,23 +133,21 @@ def scanIfDay(width, height, daymode):
     data1 = takeMotionImage(width, height, daymode)
     while not motionFound:
         data2 = takeMotionImage(width, height, daymode)
-        totalCount = 0L;
+        pCnt = 0L;
         diffCount = 0L;
         for w in range(0, width):
             for h in range(0, height):
                 # get the diff of the pixel. Conversion to int
                 # is required to avoid unsigned short overflow.
                 diff = abs(int(data1[h][w][1]) - int(data2[h][w][1]))
-                total = abs(int(data1[h][w][2])
-                totalCount = totalCount + total
-                if  diff > motionSensitivity:
+                if  diff > threshold:
                     diffCount += 1
-            if diffCount > motionThreshold:
+            if diffCount > sensitivity:
                 break; #break outer loop.
-        if diffCount > motionThreshold:
+        if diffCount > sensitivity:
             motionFound = True
         else:
-            print totalCount
+            # print "Sum of all pixels=", pxCnt
             data2 = data1              
     return motionFound
            
@@ -158,11 +162,11 @@ def scanMotion(width, height, daymode):
                 # get the diff of the pixel. Conversion to int
                 # is required to avoid unsigned short overflow.
                 diff = abs(int(data1[h][w][1]) - int(data2[h][w][1]))
-                if  diff > motionSensitivity:
+                if  diff > threshold:
                     diffCount += 1
-            if diffCount > motionThreshold:
+            if diffCount > sensitivity:
                 break; #break outer loop.
-        if diffCount > motionThreshold:
+        if diffCount > sensitivity:
             motionFound = True
         else:
             data2 = data1              
@@ -171,20 +175,25 @@ def scanMotion(width, height, daymode):
 def getFileName(imagePath, imageNamePrefix, currentCount):
     rightNow = datetime.datetime.now()
     if numberSequence :
-        fileName = imagePath + "/" + imageNamePrefix + str(currentCount) + ".jpg"
+        filename = imagePath + "/" + imageNamePrefix + str(currentCount) + ".jpg"
     else:
-        fileName = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( imagePath, imageNamePrefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
-    return fileName    
+        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( imagePath, imageNamePrefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    return filename    
 
 def motionDetection():
-    print "Looking for Day Motion"
+    print "Scanning for Motion threshold=%i sensitivity=%i ......"  % (threshold, sensitivity)
     isDay = True
-    if scanMotion(testWidth, testHeight, isDay):
-        print "Night Mode Motion found"
-        filename = "test.jpg"
-        takeDayImage( imageWidth, imageHeight, fileName )
-        
-        
+    currentCount= 1000
+    while True:
+        if scanMotion(testWidth, testHeight, isDay):
+            filename = getFileName(imagePath, imageNamePrefix, currentCount)
+            if numberSequence:
+                currentCount += 1
+            if isDay:
+                takeDayImage( imageWidth, imageHeight, filename )
+            else:
+                takeNightImage( imageWidth, imageHeight, filename )
+             
 if __name__ == '__main__':
     try:
         motionDetection()
@@ -192,7 +201,8 @@ if __name__ == '__main__':
         print ""
         print "+++++++++++++++"
         print "Exiting Program"
-        print "+++++++++++++++"       
+        print "+++++++++++++++" 
+        print ""        
 
     
     
