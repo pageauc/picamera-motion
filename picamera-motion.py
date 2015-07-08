@@ -28,7 +28,7 @@ SECONDS2MICRO = 1000000  # Constant for converting Shutter Speed in Seconds to M
 
 # User Customizable Settings
 imageDir = "images"
-imagePath = "/home/pi/picamera-motion/" + imageDir
+imagePath = "/home/pi/pimotion/" + imageDir
 imageNamePrefix = 'capture-'  # Prefix for all image file names. Eg front-
 imageWidth = 1980
 imageHeight = 1080
