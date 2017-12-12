@@ -7,42 +7,37 @@
 # original code on github https://github.com/pageauc/picamera-motion
 
 # This is sample code that can be used for further development
+ver = "ver 1.5"
 
-progName="picamera-motion.py"
-ver = "ver 1.3"
-print("%s %s  written by Claude Pageau" % (progName, ver))
-print("---------------------------------------------")
-verbose = True
-
-#Constants
-SECONDS2MICRO = 1000000  # Constant for converting Shutter Speed in Seconds to Microseconds
-# Find the path of this python script and set some global variables
 import os
-mypath=os.path.abspath(__file__)
-baseDir=mypath[0:mypath.rfind("/")+1]
-baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
+mypath = os.path.abspath(__file__)
+baseDir = mypath[0:mypath.rfind("/")+1]
+baseFileName = mypath[mypath.rfind("/")+1:mypath.rfind(".")]
+progName = baseFileName
+print("%s %s  written by Claude Pageau and utpalc" % (progName, ver))
+print("---------------------------------------------")
 
-# User Customizable Settings
+verbose = True   # Display Logging Messages True=on False=off
+
+# User Image Settings
+# -------------------
 imageDir = "images"
 imagePath = baseDir + imageDir  # Where to save the images
-imageNamePrefix = 'capture-'  # Prefix for all image file names. Eg front-
-imageWidth = 1980
-imageHeight = 1080
+imageNamePrefix = 'mo-'         # Prefix for all image file names. Eg front-
+imageWidth = 1920    # Final image width
+imageHeight = 1080   # Final image height
 imageVFlip = False   # Flip image Vertically
 imageHFlip = False   # Flip image Horizontally
-imagePreview = False
+imagePreview = False # Set picamera preview False=off True=on
+imageNumOn = False   # Image Naming True=Number sequence  False=DateTime
+imageNumStart = 1000 # Start of number sequence if imageNumOn=True
 
-numberSequence = False
-
+# User Motion Detection Settings
+# ------------------------------
 threshold = 10  # How Much pixel changes
 sensitivity = 100  # How many pixels change
-
-nightISO = 800
-nightShutSpeed = 6 * SECONDS2MICRO  # seconds times conversion to microseconds constant
-
-# camera motion scann image size Advanced Settings not normally changed 
-testWidth = 128
-testHeight = 80
+streamWidth = 128  # motion scan stream Width
+streamHeight = 80
 
 if verbose:
     print("Loading python libraries .....")
@@ -53,11 +48,8 @@ import picamera
 import picamera.array
 import datetime
 import time
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-from fractions import Fraction
 
+#------------------------------------------------------------------------------
 def checkImagePath(imagedir):
     # if imagePath does not exist create the folder
     if not os.path.isdir(imagePath):
@@ -66,95 +58,52 @@ def checkImagePath(imagedir):
         try:
             os.makedirs(imagePath)
         except:
-            print("ERROR - Could not create folder %s" % imagePath)
+            print("ERROR - Could Not Create Folder %s" % imagePath)
     return imagePath
 
+#------------------------------------------------------------------------------
+def getFileName(imagePath, imageNamePrefix, currentCount):
+    rightNow = datetime.datetime.now()
+    if imageNumOn :
+        # could use os.path.join to construct file image path
+        filename = imagePath + "/" + imageNamePrefix + str(currentCount) + ".jpg"
+    else:
+        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( imagePath, imageNamePrefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    return filename
+
+#------------------------------------------------------------------------------
 def takeDayImage(imageWidth, imageHeight, filename):
     with picamera.PiCamera() as camera:
-        camera.resolution = (imageWidth, imageHeight) 
+        camera.resolution = (imageWidth, imageHeight)
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
+        time.sleep(1)
         camera.capture(filename)
-    if verbose:  
+    if verbose:
         print("takeDayImage - Captured %s" % (filename))
     return filename
 
-def takeNightImage(imageWidth, imageHeight, filename):
+#------------------------------------------------------------------------------
+def takeStreamImage(width, height):
     with picamera.PiCamera() as camera:
-        camera.resolution = (imageWidth, imageHeight) 
-        if imagePreview:
-            camera.start_preview()
-        camera.vflip = imageVFlip
-        camera.hflip = imageHFlip
-        # Night time low light settings have long exposure times 
-        # Settings for Low Light Conditions 
-        # Set a frame rate of 1/6 fps, then set shutter
-        # speed to 6s and ISO to approx 800 per nightISO variable
-        camera.framerate = Fraction(1, 6)
-        camera.shutter_speed = nightShutSpeed
-        camera.exposure_mode = 'off'
-        camera.iso = nightISO
-        # Give the camera a good long time to measure AWB
-        # (you may wish to use fixed AWB instead)
-        time.sleep(10)
-        camera.capture(filename)
-    if verbose:  
-        print("checkNightMode - Captured %s" % (filename))
-    return filename
-
-def takeMotionImage(width, height, daymode):
-    with picamera.PiCamera() as camera:
-        time.sleep(1)
         camera.resolution = (width, height)
         with picamera.array.PiRGBArray(camera) as stream:
-            if daymode:
-                camera.exposure_mode = 'auto'
-                camera.awb_mode = 'auto' 
-            else:
-                # Take Low Light image            
-                # Set a framerate of 1/6 fps, then set shutter
-                # speed to 6s and ISO to 800
-                camera.framerate = Fraction(1, 6)
-                camera.shutter_speed = nightShutSpeed
-                camera.exposure_mode = 'off'
-                camera.iso = nightISO
-                # Give the camera a good long time to measure AWB
-                # (you may wish to use fixed AWB instead)
-                time.sleep( 10 )
+            camera.exposure_mode = 'auto'
+            camera.awb_mode = 'auto'
             camera.capture(stream, format='rgb')
             return stream.array
 
-def scanIfDay(width, height, daymode):
-    data1 = takeMotionImage(width, height, daymode)
-    while not motionFound:
-        data2 = takeMotionImage(width, height, daymode)
-        diffCount = 0;
-        for w in range(0, width):
-            for h in range(0, height):
-                # get the diff of the pixel. Conversion to int
-                # is required to avoid unsigned short overflow.
-                diff = abs(int(data1[h][w][1]) - int(data2[h][w][1]))
-                if  diff > threshold:
-                    diffCount += 1
-            if diffCount > sensitivity:
-                break; #break outer loop.
-        if diffCount > sensitivity:
-            motionFound = True
-        else:
-            data1 = data2              
-    return motionFound
-           
-def scanMotion(width, height, daymode):
+#------------------------------------------------------------------------------
+def scanMotion(width, height):
     motionFound = False
-    data1 = takeMotionImage(width, height, daymode)
+    data1 = takeStreamImage(width, height)
     while not motionFound:
-        data2 = takeMotionImage(width, height, daymode)
+        data2 = takeStreamImage(width, height)
         diffCount = 0;
         for w in range(0, width):
             for h in range(0, height):
@@ -168,31 +117,21 @@ def scanMotion(width, height, daymode):
         if diffCount > sensitivity:
             motionFound = True
         else:
-            data1 = data2              
+            data1 = data2
     return motionFound
 
-def getFileName(imagePath, imageNamePrefix, currentCount):
-    rightNow = datetime.datetime.now()
-    if numberSequence :
-        filename = imagePath + "/" + imageNamePrefix + str(currentCount) + ".jpg"
-    else:
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( imagePath, imageNamePrefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
-    return filename    
-
+#------------------------------------------------------------------------------
 def motionDetection():
     print("Scanning for Motion threshold=%i sensitivity=%i ......"  % (threshold, sensitivity))
-    isDay = True
-    currentCount= 1000
+    currentCount = imageNumStart
     while True:
-        if scanMotion(testWidth, testHeight, isDay):
+        if scanMotion(streamWidth, streamHeight):
             filename = getFileName(imagePath, imageNamePrefix, currentCount)
-            if numberSequence:
+            if imageNumOn:
                 currentCount += 1
-            if isDay:
-                takeDayImage( imageWidth, imageHeight, filename )
-            else:
-                takeNightImage( imageWidth, imageHeight, filename )
-             
+            takeDayImage( imageWidth, imageHeight, filename )
+
+# Start Main Program Logic
 if __name__ == '__main__':
     try:
         checkImagePath(imageDir)
@@ -200,10 +139,10 @@ if __name__ == '__main__':
     except:
         print("")
         print("+++++++++++++++")
-        print("Exiting Program")
-        print("+++++++++++++++") 
-     
+        print("Exiting %s" % progName)
+        print("+++++++++++++++")
 
-    
-    
-    
+
+
+
+
