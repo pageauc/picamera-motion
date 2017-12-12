@@ -3,7 +3,7 @@
                   -----------------------------------
 Summary
 -------
-based on original code written by brainflakes and modified by pageauc
+Based on original code written by brainflakes and modified by pageauc
 user utpalc rewrote motion detection using picamera stream and pageauc
 modified this sample code to this example application
 This code uses the picamera python libraries rather than raspistill.
@@ -11,10 +11,12 @@ Posted on Raspberry Pi forum under Lightweight Python Motion Detection
 Sample video posted at http://youtu.be/ZuHAfwZlzqY
 Code modified to exit image scanning loop as soon as the sensitivity value
 is exceeded. This speeds taking larger photo if motion detected early in scan
+Code is python3 compatible.
 This code is available on github at https://github.com/pageauc/picamera-motion
+
 Note:
-This version uses picamera python libraries but does not integrate
-give synchronization.  This is basically sample code to assist development
+This is basically sample code to assist development. For a full feature app
+see my pi-timolo repo at https://github.com/pageauc/pi-timolo
 
 Install Instructions
 --------------------
@@ -24,9 +26,8 @@ Install Instructions
 cd ~
 mkdir pimotion
 cd pimotion
-mkdir images
 sudo apt-get install python-imaging
-sudo apt-get install python-picamera
+sudo apt-get install python-picamera python3-picamera
 wget https://raw.github.com/pageauc/picamera-motion/master/picamera-motion.py
 wget https://raw.github.com/pageauc/picamera-motion/master/Readme.txt
 python ./picamera-motion.py

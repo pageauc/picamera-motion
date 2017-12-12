@@ -9,7 +9,7 @@
 # This is sample code that can be used for further development
 
 progName="picamera-motion.py"
-ver = "ver 1.2"
+ver = "ver 1.3"
 print("%s %s  written by Claude Pageau" % (progName, ver))
 print("---------------------------------------------")
 verbose = True
@@ -134,8 +134,7 @@ def scanIfDay(width, height, daymode):
     data1 = takeMotionImage(width, height, daymode)
     while not motionFound:
         data2 = takeMotionImage(width, height, daymode)
-        pCnt = 0L;
-        diffCount = 0L;
+        diffCount = 0;
         for w in range(0, width):
             for h in range(0, height):
                 # get the diff of the pixel. Conversion to int
@@ -148,7 +147,6 @@ def scanIfDay(width, height, daymode):
         if diffCount > sensitivity:
             motionFound = True
         else:
-            # print("Sum of all pixels= %i" % pxCnt)
             data1 = data2              
     return motionFound
            
@@ -157,7 +155,7 @@ def scanMotion(width, height, daymode):
     data1 = takeMotionImage(width, height, daymode)
     while not motionFound:
         data2 = takeMotionImage(width, height, daymode)
-        diffCount = 0L;
+        diffCount = 0;
         for w in range(0, width):
             for h in range(0, height):
                 # get the diff of the pixel. Conversion to int
