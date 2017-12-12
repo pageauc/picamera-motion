@@ -169,7 +169,7 @@ def scanMotion(width, height, daymode):
         if diffCount > sensitivity:
             motionFound = True
         else:
-            data2 = data1              
+            data1 = data2              
     return motionFound
 
 def getFileName(imagePath, imageNamePrefix, currentCount):
