@@ -8,27 +8,23 @@
 
 # This is sample code that can be used for further development
 
+progName="picamera-motion.py"
+ver = "ver 1.2"
+print("%s %s  written by Claude Pageau" % (progName, ver))
+print("---------------------------------------------")
 verbose = True
-if verbose:
-    print "Loading python libraries ....."
-else:
-    print "verbose output has been disabled verbose=False"
-
-import picamera
-import picamera.array
-import datetime
-import time
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-from fractions import Fraction
 
 #Constants
 SECONDS2MICRO = 1000000  # Constant for converting Shutter Speed in Seconds to Microseconds
+# Find the path of this python script and set some global variables
+import os
+mypath=os.path.abspath(__file__)
+baseDir=mypath[0:mypath.rfind("/")+1]
+baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
 
 # User Customizable Settings
 imageDir = "images"
-imagePath = "/home/pi/pimotion/" + imageDir
+imagePath = baseDir + imageDir  # Where to save the images
 imageNamePrefix = 'capture-'  # Prefix for all image file names. Eg front-
 imageWidth = 1980
 imageHeight = 1080
@@ -44,29 +40,36 @@ sensitivity = 100  # How many pixels change
 nightISO = 800
 nightShutSpeed = 6 * SECONDS2MICRO  # seconds times conversion to microseconds constant
 
-# Advanced Settings not normally changed 
+# camera motion scann image size Advanced Settings not normally changed 
 testWidth = 128
 testHeight = 80
 
-def checkImagePath(imagedir):
-    # Find the path of this python script and set some global variables
-    mypath=os.path.abspath(__file__)
-    baseDir=mypath[0:mypath.rfind("/")+1]
-    baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
+if verbose:
+    print("Loading python libraries .....")
+else:
+    print("verbose output has been disabled verbose=False")
 
-    # Setup imagePath and create folder if it Does Not Exist.
-    imagePath = baseDir + imagedir  # Where to save the images
+import picamera
+import picamera.array
+import datetime
+import time
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
+from fractions import Fraction
+
+def checkImagePath(imagedir):
     # if imagePath does not exist create the folder
     if not os.path.isdir(imagePath):
         if verbose:
-            print "%s - Image Storage folder not found." % (progName)
-            print "%s - Creating image storage folder %s " % (progName, imagePath)
-        os.makedirs(imagePath)
+            print("Creating Image Storage folder %s" % (imagePath))
+        try:
+            os.makedirs(imagePath)
+        except:
+            print("ERROR - Could not create folder %s" % imagePath)
     return imagePath
 
 def takeDayImage(imageWidth, imageHeight, filename):
-    if verbose:
-        print "takeDayImage - Working ....."
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
@@ -79,12 +82,10 @@ def takeDayImage(imageWidth, imageHeight, filename):
         camera.awb_mode = 'auto'
         camera.capture(filename)
     if verbose:  
-        print "takeDayImage - Captured %s" % (filename)
+        print("takeDayImage - Captured %s" % (filename))
     return filename
 
 def takeNightImage(imageWidth, imageHeight, filename):
-    if verbose:
-        print "takeNightImage - Working ....."
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         if imagePreview:
@@ -104,7 +105,7 @@ def takeNightImage(imageWidth, imageHeight, filename):
         time.sleep(10)
         camera.capture(filename)
     if verbose:  
-        print "checkNightMode - Captured %s" % (filename)
+        print("checkNightMode - Captured %s" % (filename))
     return filename
 
 def takeMotionImage(width, height, daymode):
@@ -147,7 +148,7 @@ def scanIfDay(width, height, daymode):
         if diffCount > sensitivity:
             motionFound = True
         else:
-            # print "Sum of all pixels=", pxCnt
+            # print("Sum of all pixels= %i" % pxCnt)
             data1 = data2              
     return motionFound
            
@@ -181,7 +182,7 @@ def getFileName(imagePath, imageNamePrefix, currentCount):
     return filename    
 
 def motionDetection():
-    print "Scanning for Motion threshold=%i sensitivity=%i ......"  % (threshold, sensitivity)
+    print("Scanning for Motion threshold=%i sensitivity=%i ......"  % (threshold, sensitivity))
     isDay = True
     currentCount= 1000
     while True:
@@ -196,13 +197,14 @@ def motionDetection():
              
 if __name__ == '__main__':
     try:
+        checkImagePath(imageDir)
         motionDetection()
-    finally:
-        print ""
-        print "+++++++++++++++"
-        print "Exiting Program"
-        print "+++++++++++++++" 
-        print ""        
+    except:
+        print("")
+        print("+++++++++++++++")
+        print("Exiting Program")
+        print("+++++++++++++++") 
+     
 
     
     
