@@ -45,8 +45,8 @@ nightISO = 800
 nightShutSpeed = 6 * SECONDS2MICRO  # seconds times conversion to microseconds constant
 
 # Advanced Settings not normally changed 
-testWidth = 100
-testHeight = 75
+testWidth = 128
+testHeight = 80
 
 def checkImagePath(imagedir):
     # Find the path of this python script and set some global variables
@@ -148,7 +148,7 @@ def scanIfDay(width, height, daymode):
             motionFound = True
         else:
             # print "Sum of all pixels=", pxCnt
-            data2 = data1              
+            data1 = data2              
     return motionFound
            
 def scanMotion(width, height, daymode):
