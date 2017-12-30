@@ -1,8 +1,6 @@
-                  Lightweight python Motion Detection
-                         picamera Lite version
-                  -----------------------------------
-Summary
--------
+#  Lightweight python Motion Detection
+
+## Summary
 Based on original code written by brainflakes and modified by pageauc
 user utpalc rewrote motion detection using picamera stream and pageauc
 modified this sample code to this example application
@@ -14,29 +12,30 @@ is exceeded. This speeds taking larger photo if motion detected early in scan
 Code is python3 compatible.
 This code is available on github at https://github.com/pageauc/picamera-motion
 
-Note:
-This is basically sample code to assist development. For a full feature app
+***Note:*** This is basically sample code to assist development. For a full feature app
 see my pi-timolo repo at https://github.com/pageauc/pi-timolo
 
-Install Instructions
---------------------
-1. Log in to RPI using putty ssh or raspberry pi console terminal session
-2. Cut and Paste curl command below into RPI console
+## Install Instructions
+Log in to RPI using putty ssh or raspberry pi console terminal session
+then Cut and Paste curl command below into RPI console
 
     curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
 
-To Run
+How to Run
 
     cd ~/picamera-motion
     ./picamera-motion.py
 
-Tuning
-------
-To change motion detection settings edit the pimotion.py file using nano
+## Change Settings
+To change motion detection settings edit the picamera-motion.py file using nano
 it is recommended you make a backup copy just in case.
+
+    nano picamera-motion.py
+
 from a logged in putty ssh or console terminal session edit using nano.  You
 can also use IDLE if desired.
 
+## How to Upload Images
 Uploading images to a Remote Storage Service.  See https://github.com/pageauc/rclone4pi
 the run sync
 
