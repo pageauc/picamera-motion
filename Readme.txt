@@ -21,19 +21,14 @@ see my pi-timolo repo at https://github.com/pageauc/pi-timolo
 Install Instructions
 --------------------
 1. Log in to RPI using putty ssh or raspberry pi console terminal session
-2. To install perform the following commands
+2. Cut and Paste curl command below into RPI console
 
-cd ~
-mkdir pimotion
-cd pimotion
-sudo apt-get install python-imaging
-sudo apt-get install python-picamera python3-picamera
-wget https://raw.github.com/pageauc/picamera-motion/master/picamera-motion.py
-wget https://raw.github.com/pageauc/picamera-motion/master/Readme.txt
-python ./picamera-motion.py
+curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
 
-Note: you may have to install other libraries and make sure your
-raspberry pi is running a current updated version of raspbian.
+To Run
+
+    cd ~/picamera-motion
+    ./picamera-motion.py
 
 Tuning
 ------
@@ -41,7 +36,15 @@ To change motion detection settings edit the pimotion.py file using nano
 it is recommended you make a backup copy just in case.
 from a logged in putty ssh or console terminal session edit using nano.  You
 can also use IDLE if desired.
-   
+
+Uploading images to a Remote Storage Service.  See https://github.com/pageauc/rclone4pi
+the run sync
+
+    cd ~/picamera-motion
+    ./rclone-sync.sh
+
+Review output for further details or trouble shooting
+
 That's it
 Please note this code is pretty basic but a good learning tool if
 you need to implement a simple python only motion detection application
