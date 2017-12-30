@@ -23,7 +23,7 @@ Install Instructions
 1. Log in to RPI using putty ssh or raspberry pi console terminal session
 2. Cut and Paste curl command below into RPI console
 
-curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
+    curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
 
 To Run
 

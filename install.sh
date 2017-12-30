@@ -12,6 +12,7 @@ echo "Download Project Files ..."
 wget -O picamera-motion.py https://raw.github.com/pageauc/picamera-motion/master/picamera-motion.py
 wget -O rclone-sync.sh https://raw.github.com/pageauc/picamera-motion/master/rclone-sync.sh
 wget -O install.sh https://raw.github.com/pageauc/picamera-motion/master/install.sh
+wget -O Readme.md https://raw.github.com/pageauc/picamera-motion/master/Readme.md
 chmod +x picamera-motion.py
 chmod +x *sh
 if [ -f /usr/bin/rclone ]; then
