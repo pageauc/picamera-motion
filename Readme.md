@@ -21,7 +21,7 @@ then Cut and Paste curl command below into RPI console
 
     curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
 
-How to Run
+## How to Run
 
     cd ~/picamera-motion
     ./picamera-motion.py
