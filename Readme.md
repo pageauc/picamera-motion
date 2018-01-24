@@ -21,15 +21,19 @@ then Cut and Paste curl command below into RPI console
 
     curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
 
-## How To Run
+## How To Test Run
 
     cd ~/picamera-motion
     ./picamera-motion.py
 
 ## How To Change Settings
-Edit the picamera-motion.py file using nano or python IDLE.
+Use menubox.sh to Edit and/or Start/Stop picamera-motion.py and/or webserver.py in Background
 
-    nano picamera-motion.py
+    ./menubox.sh
+
+Edit settings.py using nano or python IDLE.
+
+    nano settings.py
 
 ctrl x y to Save Changes and Exit nano
 
@@ -37,7 +41,7 @@ ctrl x y to Save Changes and Exit nano
 Uploading images to a Remote Storage Service. For Details
 See https://github.com/pageauc/rclone4pi/wiki
 
-To Run rclone sync
+To Run rclone sync (You Must have a Remote Service Name Configured)
 
     ./rclone-sync.sh
 
