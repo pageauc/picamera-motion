@@ -37,6 +37,18 @@ Edit settings.py using nano or python IDLE.
 
 ctrl x y to Save Changes and Exit nano
 
+## How to Run On Boot
+To start picamera-motion and/or webserver on startup
+
+    sudo nano /etc/rc.local
+
+Add the following as appropriate
+
+    su pi -c "/home/pi/picamera-motion/picamera-motion.sh start"
+    su pi -c "/home/pi/picamera-motion/webserver.sh start" 
+
+ctrl-x to exit and save changes    
+
 ## How to Upload Images
 Uploading images to a Remote Storage Service. For Details
 See https://github.com/pageauc/rclone4pi/wiki
@@ -44,8 +56,21 @@ See https://github.com/pageauc/rclone4pi/wiki
 To Run rclone sync (You Must have a Remote Service Name Configured)
 
     ./rclone-sync.sh
+    
 
-Review output for further details or trouble shooting
+Review output for further details or trouble shooting    
+    
+## How to Automate Upload
+Create a crontab entry to run rclone-sync.sh regularly
+
+    sudo crontab -e
+    
+Add/Edit the following entry
+
+    */5 * * * * su pi -c "/home/pi/picamera-motion/rclone-sync.sh >/dev/null 2>&1"    
+ 
+ctrl-x y to exit and save changes 
+
 
 That's it
 Please note this code is pretty basic but a good learning tool if
