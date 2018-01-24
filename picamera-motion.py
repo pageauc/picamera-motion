@@ -7,7 +7,7 @@
 # original code on github https://github.com/pageauc/picamera-motion
 
 # This is sample code that can be used for further development
-ver = "ver 1.6"
+ver = "ver 1.7"
 
 import os
 mypath = os.path.abspath(__file__)
@@ -17,27 +17,11 @@ progName = baseFileName
 print("%s %s  written by Claude Pageau and utpalc" % (progName, ver))
 print("---------------------------------------------")
 
-verbose = True   # Display Logging Messages True=on False=off
-
-# User Image Settings
-# -------------------
-imageDir = "images"
-imagePath = baseDir + imageDir  # Where to save the images
-imageNamePrefix = 'mo-'         # Prefix for all image file names. Eg front-
-imageWidth = 1920    # Final image width
-imageHeight = 1080   # Final image height
-imageVFlip = False   # Flip image Vertically
-imageHFlip = False   # Flip image Horizontally
-imagePreview = False # Set picamera preview False=off True=on
-imageNumOn = False   # Image Naming True=Number sequence  False=DateTime
-imageNumStart = 1000 # Start of number sequence if imageNumOn=True
-
-# User Motion Detection Settings
-# ------------------------------
-threshold = 10  # How Much pixel changes
-sensitivity = 100  # How many pixels change
-streamWidth = 128  # motion scan stream Width
-streamHeight = 80
+try:
+    from settings import *
+except:
+    print("ERROR : Could Not import settings.py")
+    exit(1)
 
 if verbose:
     print("INFO  : Loading python libraries .....")
@@ -50,7 +34,7 @@ import datetime
 import time
 
 #------------------------------------------------------------------------------
-def checkImagePath(imagedir):
+def checkImagePath():
     # if imagePath does not exist create the folder
     if not os.path.isdir(imagePath):
         if verbose:
@@ -134,13 +118,14 @@ def motionDetection():
 # Start Main Program Logic
 if __name__ == '__main__':
     try:
-        checkImagePath(imageDir)
+        checkImagePath()
         motionDetection()
-    except:
+    except KeyboardInterrupt :
         print("")
-        print("##################")
+        print("######################")
+        print("# User Pressed ctrl-c")
         print("# Exiting %s" % progName)
-        print("##################")
+        print("#####################")
 
 
 
