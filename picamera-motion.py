@@ -7,7 +7,7 @@
 # original code on github https://github.com/pageauc/picamera-motion
 
 # This is sample code that can be used for further development
-ver = "ver 1.5"
+ver = "ver 1.6"
 
 import os
 mypath = os.path.abspath(__file__)
@@ -40,9 +40,9 @@ streamWidth = 128  # motion scan stream Width
 streamHeight = 80
 
 if verbose:
-    print("Loading python libraries .....")
+    print("INFO  : Loading python libraries .....")
 else:
-    print("verbose output has been disabled verbose=False")
+    print("INFO  : verbose output has been disabled verbose=False")
 
 import picamera
 import picamera.array
@@ -54,11 +54,11 @@ def checkImagePath(imagedir):
     # if imagePath does not exist create the folder
     if not os.path.isdir(imagePath):
         if verbose:
-            print("Creating Image Storage folder %s" % (imagePath))
+            print("INFO  : Creating Image Storage folder %s" % (imagePath))
         try:
             os.makedirs(imagePath)
         except:
-            print("ERROR - Could Not Create Folder %s" % imagePath)
+            print("ERROR : Could Not Create Folder %s" % imagePath)
     return imagePath
 
 #------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ def takeDayImage(imageWidth, imageHeight, filename):
         time.sleep(1)
         camera.capture(filename)
     if verbose:
-        print("takeDayImage - Captured %s" % (filename))
+        print("INFO  : takeDayImage - Saved %s" % (filename))
     return filename
 
 #------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ def scanMotion(width, height):
 
 #------------------------------------------------------------------------------
 def motionDetection():
-    print("Scanning for Motion threshold=%i sensitivity=%i ......"  % (threshold, sensitivity))
+    print("INFO  : Scan for Motion threshold=%i sensitivity=%i ..."  % (threshold, sensitivity))
     currentCount = imageNumStart
     while True:
         if scanMotion(streamWidth, streamHeight):
@@ -138,9 +138,9 @@ if __name__ == '__main__':
         motionDetection()
     except:
         print("")
-        print("+++++++++++++++")
-        print("Exiting %s" % progName)
-        print("+++++++++++++++")
+        print("##################")
+        print("# Exiting %s" % progName)
+        print("##################")
 
 
 
