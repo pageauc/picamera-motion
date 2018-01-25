@@ -7,14 +7,14 @@
 # original code on github https://github.com/pageauc/picamera-motion
 
 # This is sample code that can be used for further development
-ver = "ver 1.7"
+ver = "ver 1.8"
 
 import os
 mypath = os.path.abspath(__file__)
 baseDir = mypath[0:mypath.rfind("/")+1]
 baseFileName = mypath[mypath.rfind("/")+1:mypath.rfind(".")]
 progName = baseFileName
-print("%s %s  written by Claude Pageau and utpalc" % (progName, ver))
+print("%s %s  written by Claude Pageau" % (progName, ver))
 print("---------------------------------------------")
 
 try:
@@ -56,7 +56,7 @@ def getFileName(imagePath, imageNamePrefix, currentCount):
     return filename
 
 #------------------------------------------------------------------------------
-def takeDayImage(imageWidth, imageHeight, filename):
+def takeDayImage(filename):
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight)
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
@@ -69,13 +69,13 @@ def takeDayImage(imageWidth, imageHeight, filename):
         time.sleep(1)
         camera.capture(filename)
     if verbose:
-        print("INFO  : takeDayImage - Saved %s" % (filename))
+        print("INFO  : takeDayImage (%ix%i) - Saved %s" % (imageWidth, imageHeight, filename))
     return filename
 
 #------------------------------------------------------------------------------
-def takeStreamImage(width, height):
+def takeStreamImage():
     with picamera.PiCamera() as camera:
-        camera.resolution = (width, height)
+        camera.resolution = (streamWidth, streamHeight)
         with picamera.array.PiRGBArray(camera) as stream:
             camera.exposure_mode = 'auto'
             camera.awb_mode = 'auto'
@@ -83,37 +83,35 @@ def takeStreamImage(width, height):
             return stream.array
 
 #------------------------------------------------------------------------------
-def scanMotion(width, height):
+def scanMotion():
     motionFound = False
-    data1 = takeStreamImage(width, height)
-    while not motionFound:
-        data2 = takeStreamImage(width, height)
+    data1 = takeStreamImage()
+    while True:
+        data2 = takeStreamImage()
         diffCount = 0;
-        for w in range(0, width):
-            for h in range(0, height):
+        for h in range(0, streamHeight):
+            for w in range(0, streamWidth):
                 # get the diff of the pixel. Conversion to int
                 # is required to avoid unsigned short overflow.
                 diff = abs(int(data1[h][w][1]) - int(data2[h][w][1]))
                 if  diff > threshold:
                     diffCount += 1
-            if diffCount > sensitivity:
-                break; #break outer loop.
-        if diffCount > sensitivity:
-            motionFound = True
-        else:
-            data1 = data2
-    return motionFound
+                    if diffCount > sensitivity:
+                        return w, h
+        data1 = data2
 
 #------------------------------------------------------------------------------
 def motionDetection():
-    print("INFO  : Scan for Motion threshold=%i sensitivity=%i ..."  % (threshold, sensitivity))
+    print("INFO  : Scan for Motion threshold=%i (diff)  sensitivity=%i (num px's)..."  % (threshold, sensitivity))
     currentCount = imageNumStart
     while True:
-        if scanMotion(streamWidth, streamHeight):
-            filename = getFileName(imagePath, imageNamePrefix, currentCount)
-            if imageNumOn:
-                currentCount += 1
-            takeDayImage( imageWidth, imageHeight, filename )
+        x, y = scanMotion()
+        print("INFO  : Motion Found At xy(%i,%i) in stream wh(%i,%i)"
+                                  %(x, y, streamWidth, streamHeight))
+        filename = getFileName(imagePath, imageNamePrefix, currentCount)
+        if imageNumOn:
+            currentCount += 1
+        takeDayImage( filename )
 
 # Start Main Program Logic
 if __name__ == '__main__':
@@ -122,10 +120,10 @@ if __name__ == '__main__':
         motionDetection()
     except KeyboardInterrupt :
         print("")
-        print("######################")
+        print("########################")
         print("# User Pressed ctrl-c")
         print("# Exiting %s" % progName)
-        print("#####################")
+        print("########################")
 
 
 
