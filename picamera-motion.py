@@ -38,7 +38,7 @@ def getNow():
     Now = ("%04d%02d%02d-%02d:%02d:%02d" % ( rightNow.year, rightNow.month, rightNow.day,
                                              rightNow.hour, rightNow.minute, rightNow.second))
     return Now
-                                           
+
 #------------------------------------------------------------------------------
 def checkImagePath():
     # if imagePath does not exist create the folder
@@ -58,8 +58,8 @@ def getFileName(imagePath, imageNamePrefix, currentCount):
         # could use os.path.join to construct file image path
         filename = imagePath + "/" + imageNamePrefix + str(currentCount) + ".jpg"
     else:
-        filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % 
-        ( imagePath, imageNamePrefix, rightNow.year, rightNow.month, rightNow.day, 
+        filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.jpg" %
+        ( imagePath, imageNamePrefix, rightNow.year, rightNow.month, rightNow.day,
                                       rightNow.hour, rightNow.minute, rightNow.second))
     return filename
 
@@ -77,7 +77,7 @@ def takeDayImage(filename):
         time.sleep(1)
         camera.capture(filename)
     if verbose:
-        print("%s INFO  : takeDayImage (%ix%i) - Saved %s" % 
+        print("%s INFO  : takeDayImage (%ix%i) - Saved %s" %
                    ( getNow(), imageWidth, imageHeight, filename))
     return filename
 
@@ -111,8 +111,8 @@ def scanMotion():
 
 #------------------------------------------------------------------------------
 def motionDetection():
-    print("INFO  : Scan for Motion threshold=%i (diff)  sensitivity=%i (num px's)..."
-                                          % (threshold, sensitivity))
+    print("%s INFO  : Scan for Motion threshold=%i (diff)  sensitivity=%i (num px's)..."
+                                          % (getNow(), threshold, sensitivity))
     currentCount = imageNumStart
     while True:
         x, y = scanMotion()
