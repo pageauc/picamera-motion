@@ -7,7 +7,7 @@
 # original code on github https://github.com/pageauc/picamera-motion
 
 # This is sample code that can be used for further development
-ver = "ver 1.8"
+ver = "ver 1.9"
 
 import os
 mypath = os.path.abspath(__file__)
@@ -33,6 +33,12 @@ import picamera.array
 import datetime
 import time
 
+def getNow():
+    rightNow = datetime.datetime.now()
+    Now = ("%04d%02d%02d-%02d:%02d:%02d" % ( rightNow.year, rightNow.month, rightNow.day,
+                                             rightNow.hour, rightNow.minute, rightNow.second))
+    return Now
+                                           
 #------------------------------------------------------------------------------
 def checkImagePath():
     # if imagePath does not exist create the folder
@@ -52,7 +58,9 @@ def getFileName(imagePath, imageNamePrefix, currentCount):
         # could use os.path.join to construct file image path
         filename = imagePath + "/" + imageNamePrefix + str(currentCount) + ".jpg"
     else:
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( imagePath, imageNamePrefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+        filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % 
+        ( imagePath, imageNamePrefix, rightNow.year, rightNow.month, rightNow.day, 
+                                      rightNow.hour, rightNow.minute, rightNow.second))
     return filename
 
 #------------------------------------------------------------------------------
@@ -69,7 +77,8 @@ def takeDayImage(filename):
         time.sleep(1)
         camera.capture(filename)
     if verbose:
-        print("INFO  : takeDayImage (%ix%i) - Saved %s" % (imageWidth, imageHeight, filename))
+        print("%s INFO  : takeDayImage (%ix%i) - Saved %s" % 
+                   ( getNow(), imageWidth, imageHeight, filename))
     return filename
 
 #------------------------------------------------------------------------------
@@ -102,12 +111,13 @@ def scanMotion():
 
 #------------------------------------------------------------------------------
 def motionDetection():
-    print("INFO  : Scan for Motion threshold=%i (diff)  sensitivity=%i (num px's)..."  % (threshold, sensitivity))
+    print("INFO  : Scan for Motion threshold=%i (diff)  sensitivity=%i (num px's)..."
+                                          % (threshold, sensitivity))
     currentCount = imageNumStart
     while True:
         x, y = scanMotion()
-        print("INFO  : Motion Found At xy(%i,%i) in stream wh(%i,%i)"
-                                  %(x, y, streamWidth, streamHeight))
+        print("%s INFO  : Motion Found At xy(%i,%i) in stream wh(%i,%i)"
+                                  %(getNow(), x, y, streamWidth, streamHeight))
         filename = getFileName(imagePath, imageNamePrefix, currentCount)
         if imageNumOn:
             currentCount += 1
