@@ -18,11 +18,15 @@ import datetime
 import time
 import picamera
 import picamera.array
-
+if not os.path.exists('settings.py'):
+    print("ERROR : File Not Found - settings.py")
+    print("        Cannot import program variables.")
+    print("        To Repair Run menubox.sh UPGRADE menu pick.")
+    exit(1)
 try:
     from settings import *
 except ImportError:
-    print("ERROR : Could Not import settings.py")
+    print("ERROR : Could Not Import settings.py")
     exit(1)
 
 PROG_VER = "ver 2.1"
