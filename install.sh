@@ -9,6 +9,8 @@ echo "INFO  : Install Dependencies ...."
 sudo apt-get install -y python-imaging
 sudo apt-get install -y python-picamera python3-picamera
 sudo apt-get install -y dos2unix
+sudo apt-get install -y pandoc
+
 echo "INFO  : Download Project Files ..."
 wget -O picamera-motion.py https://raw.github.com/pageauc/picamera-motion/master/picamera-motion.py
 wget -O picamera-motion.sh https://raw.github.com/pageauc/picamera-motion/master/picamera-motion.sh
@@ -18,7 +20,6 @@ wget -O webserver.py https://raw.github.com/pageauc/picamera-motion/master/webse
 wget -O webserver.sh https://raw.github.com/pageauc/picamera-motion/master/webserver.sh
 wget -O rclone-sync.sh https://raw.github.com/pageauc/picamera-motion/master/rclone-sync.sh
 wget -O Readme.md https://raw.github.com/pageauc/picamera-motion/master/Readme.md
-# wget -O install.sh https://raw.github.com/pageauc/picamera-motion/master/install.sh
 
 if [ ! -f /usr/bin/rclone ]; then
     mkdir -p rclone-tmp

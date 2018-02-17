@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="1.8"
+ver="1.9"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -173,8 +173,8 @@ function do_main_menu ()
       b\ *) do_webserver ;;
       c\ *) do_settings_menu ;;
       d\ *) do_upgrade ;;
-      e\ *) more -d Readme.md
-            do_anykey ;;
+      e\ *) pandoc -f markdown -t plain  Readme.md | more
+            do_anykey;;
       f\ *) do_about ;;
       q\ *) clear
             exit 0 ;;
