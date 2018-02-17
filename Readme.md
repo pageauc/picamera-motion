@@ -16,17 +16,25 @@ This project is available on github at https://github.com/pageauc/picamera-motio
 see my pi-timolo GitHub repo at https://github.com/pageauc/pi-timolo
 
 ## How To Install
-Log in to RPI using putty ssh or raspberry pi console terminal session
-then Cut and Paste curl command below into RPI console
+Log in to RPI using putty ssh or raspberry pi console terminal session.
+Prior to install it is recommended you run
+
+   sudo apt-get update
+   sudo apt-get upgrade
+
+Cut and Paste curl command below into RPI console/Putty SSH session.
 
     curl -L https://raw.github.com/pageauc/picamera-motion/master/install.sh | bash
+    
+Press enter key to run the install.sh bash script.  This will download files, install
+dependencies and change permissions as appropriate.    
 
 ## How To Test Run
 
     cd ~/picamera-motion
     ./picamera-motion.py
 
-Confirm camera and program operation per logging messages. Trouble shoot as required.   
+Confirm camera and program motion detection per logging messages. Trouble shoot as required.   
     
 ## How to Run menubox.sh
 Use menubox.sh menu picks to Edit settings.py as well as Start/Stop picamera-motion.py 
