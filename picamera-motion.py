@@ -29,7 +29,7 @@ except ImportError:
     print("ERROR : Could Not Import settings.py")
     exit(1)
 
-PROG_VER = "ver 2.1"
+PROG_VER = "ver 2.2"
 PROG_PATH = os.path.abspath(__file__)
 BASE_DIR = PROG_PATH[0:PROG_PATH.rfind("/")+1]
 BASE_FILE_NAME = PROG_PATH[PROG_PATH.rfind("/")+1:PROG_PATH.rfind(".")]
@@ -100,6 +100,8 @@ def get_stream_array():
     with picamera.PiCamera() as camera:
         camera.resolution = (streamWidth, streamHeight)
         with picamera.array.PiRGBArray(camera) as stream:
+            camera.vflip = imageVFlip
+            camera.hflip = imageHFlip        
             camera.exposure_mode = 'auto'
             camera.awb_mode = 'auto'
             camera.capture(stream, format='rgb')
