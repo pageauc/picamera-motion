@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="1.7"
+ver="1.8"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -39,21 +39,20 @@ function init_status ()
      PICAM_1="STOP"
      PICAM_2="picamera-motion.py - PID is $picamera_motion_pid"
   fi
-
 }
 
 #------------------------------------------------------------------------------
 function do_picamera_motion ()
 {
-  if [ -z "$( pgrep -f $DIR/picamera-motion.py )" ]; then
+  if [ -z "$( pgrep -f picamera-motion.py )" ]; then
      $DIR/picamera-motion.py >/dev/null 2>&1 &
-     if [ -z "$( pgrep -f $DIR/picamera-motion.py )" ]; then
+     if [ -z "$( pgrep -f picamera-motion.py )" ]; then
          whiptail --msgbox "Failed to Start picamera-motion.py   Please Investigate Problem " 20 70
      fi
   else
-     picamera_motion_pid=$( pgrep -f $DIR/picamera-motion.py )
+     picamera_motion_pid=$( pgrep -f picamera-motion.py )
      sudo kill $picamera_motion_pid
-      if [ ! -z "$( pgrep -f $DIR/picamera-motion.py )" ]; then
+      if [ ! -z "$( pgrep -f picamera-motion.py )" ]; then
           whiptail --msgbox "Failed to Stop picamera-motion.py   Please Investigate Problem" 20 70
       fi
   fi
@@ -63,9 +62,9 @@ function do_picamera_motion ()
 #------------------------------------------------------------------------------
 function do_webserver ()
 {
-  if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
+  if [ -z "$( pgrep -f webserver.py )" ]; then
      $DIR/webserver.py >/dev/null 2>&1 &
-     if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
+     if [ -z "$( pgrep -f webserver.py )" ]; then
         whiptail --msgbox "Failed to Start webserver.py   Please Investigate Problem." 20 70
      else
        myip=$(ifconfig | grep 'inet ' | grep -v 127.0.0 | cut -d " " -f 12 | cut -d ":" -f 2 )
@@ -73,9 +72,9 @@ function do_webserver ()
        whiptail --msgbox --title "Webserver Access" "Access picamera-motion web server from another network computer web browser using url http://$myip:$myport" 15 50
      fi
   else
-     webserver_pid=$( pgrep -f $DIR/webserver.py )
+     webserver_pid=$( pgrep -f webserver.py )
      sudo kill $webserver_pid
-     if [ ! -z "$( pgrep -f $DIR/webserver.py )" ]; then
+     if [ ! -z "$( pgrep -f webserver.py )" ]; then
         whiptail --msgbox "Failed to Stop webserver.py   Please Investigate Problem." 20 70
      fi
   fi
