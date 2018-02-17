@@ -77,8 +77,9 @@ Add the following as appropriate
 ctrl-x to exit and save changes    
 
 ## How to Upload Images
-Uploading images to a Remote Storage Service. For Details
-See https://github.com/pageauc/rclone4pi/wiki
+Rclone can upload images to a Remote Storage Service of your choice
+eg Google Drive, DropBox, Etc.  
+For Setup Details See https://github.com/pageauc/rclone4pi/wiki
 
 To Run rclone sync (You Must have a Remote Service Name Configured)
 
