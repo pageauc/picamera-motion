@@ -7,7 +7,6 @@
  original code on github https://github.com/pageauc/picamera-motion
  This is sample code that can be used for further development
 """
-PROG_VER = "ver 2.0"
 
 import os
 import picamera
@@ -16,10 +15,11 @@ import datetime
 import time
 try:
     from settings import *
-except:
+except ImportError:
     print("ERROR : Could Not import settings.py")
     exit(1)
 
+PROG_VER = "ver 2.1"
 PROG_PATH = os.path.abspath(__file__)
 BASE_DIR = PROG_PATH[0:PROG_PATH.rfind("/")+1]
 BASE_FILE_NAME = PROG_PATH[PROG_PATH.rfind("/")+1:PROG_PATH.rfind(".")]
@@ -30,7 +30,8 @@ if not verbose:
     print("INFO  : Logging has been disabled per verbose=%s" % verbose)
 
 #------------------------------------------------------------------------------
-def getNow():
+def get_now():
+    """ Get datetime and return formatted string"""
     right_now = datetime.datetime.now()
     now = ("%04d%02d%02d-%02d:%02d:%02d"
            % (right_now.year, right_now.month, right_now.day,
@@ -38,34 +39,34 @@ def getNow():
     return now
 
 #------------------------------------------------------------------------------
-def checkImagePath():
-    """ if imagePath does not exist create the folder """
-    if not os.path.isdir(imagePath):
+def check_image_path(image_path):
+    """ if image_path does not exist create the folder """
+    if not os.path.isdir(image_path):
         if verbose:
-            print("INFO  : Creating Image Storage folder %s" % (imagePath))
+            print("INFO  : Creating Image Storage folder %s" % (image_path))
         try:
-            os.makedirs(imagePath)
-        except:
-            print("ERROR : Could Not Create Folder %s" % imagePath)
+            os.makedirs(image_path)
+        except OSError as err:
+            print("ERROR : Could Not Create Folder %s %s" % (image_path, err))
             exit(1)
-    return imagePath
 
 #------------------------------------------------------------------------------
-def getFileName(image_path, image_name_prefix, current_count):
+def get_file_name(image_path, image_name_prefix, current_count):
     """ Create a file name based on settings.py variables """
-    if imageNumOn :
+    if imageNumOn:
         # could use os.path.join to construct file image path
         file_name = image_path + "/" + image_name_prefix + str(current_count) + ".jpg"
     else:
         right_now = datetime.datetime.now()
         file_name = ("%s/%s%04d%02d%02d-%02d%02d%02d.jpg"
-                    % (image_path, image_name_prefix,
-                       right_now.year, right_now.month, right_now.day,
-                       right_now.hour, right_now.minute, right_now.second))
+                     % (image_path, image_name_prefix,
+                        right_now.year, right_now.month, right_now.day,
+                        right_now.hour, right_now.minute, right_now.second))
     return file_name
 
 #------------------------------------------------------------------------------
-def takeDayImage(filename):
+def take_day_image(filename):
+    """ Take a picamera image """
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight)
         # camera.rotation = cameraRotate
@@ -80,11 +81,12 @@ def takeDayImage(filename):
         camera.capture(filename)
     if verbose:
         print("%s INFO  : takeDayImage (%ix%i) - Saved %s"
-              % (getNow(), imageWidth, imageHeight, filename))
+              % (get_now(), imageWidth, imageHeight, filename))
     return filename
 
 #------------------------------------------------------------------------------
-def takeStreamImage():
+def get_stream_array():
+    """ Take a stream image and return the image data array"""
     with picamera.PiCamera() as camera:
         camera.resolution = (streamWidth, streamHeight)
         with picamera.array.PiRGBArray(camera) as stream:
@@ -94,53 +96,46 @@ def takeStreamImage():
             return stream.array
 
 #------------------------------------------------------------------------------
-def scanMotion():
-    motionFound = False
-    data1 = takeStreamImage()
+def scan_motion():
+    """ Loop until motion is detected """
+    data1 = get_stream_array()
     while True:
-        data2 = takeStreamImage()
-        diffCount = 0;
+        data2 = get_stream_array()
+        diff_count = 0
         for h in range(0, streamHeight):
             for w in range(0, streamWidth):
                 # get the diff of the pixel. Conversion to int
                 # is required to avoid unsigned short overflow.
                 diff = abs(int(data1[h][w][1]) - int(data2[h][w][1]))
                 if  diff > threshold:
-                    diffCount += 1
-                    if diffCount > sensitivity:
+                    diff_count += 1
+                    if diff_count > sensitivity:
                         return w, h
         data1 = data2
 
 #------------------------------------------------------------------------------
-def motionDetection():
-    if verbose:
-        print("%s INFO  : Scan for Motion "
-              "threshold=%i (diff)  sensitivity=%i (num px's)..."
-              % (getNow(), threshold, sensitivity))
-    currentCount = imageNumStart
+def motion_detection():
+    current_count = imageNumStart
     while True:
-        x, y = scanMotion()
+        x, y = scan_motion()
         if verbose:
             print("%s INFO  : Motion Found At xy(%i,%i) in stream wh(%i,%i)"
-                  % (getNow(), x, y, streamWidth, streamHeight))
-        filename = getFileName(imagePath, imageNamePrefix, currentCount)
+                  % (get_now(), x, y, streamWidth, streamHeight))
+        filename = get_file_name(imagePath, imageNamePrefix, current_count)
         if imageNumOn:
-            currentCount += 1
-        takeDayImage(filename)
+            current_count += 1
+        take_day_image(filename)
 
 # Start Main Program Logic
 if __name__ == '__main__':
+    check_image_path(imagePath)
+    if verbose:
+        print("%s INFO  : Scan for Motion "
+              "threshold=%i (diff)  sensitivity=%i (num px's)..."
+              % (get_now(), threshold, sensitivity))
     try:
-        checkImagePath()
-        motionDetection()
+        motion_detection()
     except KeyboardInterrupt:
         print("")
-        print("########################")
-        print("# User Pressed ctrl-c")
-        print("# Exiting %s %s " % PROG_NAME, PROG_VER)
-        print("########################")
-
-
-
-
-
+        print("INFO  : User Pressed ctrl-c")
+        print("        Exiting %s %s " % (PROG_NAME, PROG_VER))
