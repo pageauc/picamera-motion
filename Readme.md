@@ -1,6 +1,6 @@
 #  Lightweight python Motion Detection
 
-## Summary
+## Description
 Based on original code written by brainflakes and modified by pageauc
 user utpalc rewrote motion detection using picamera stream and pageauc
 modified this sample code to this example application
@@ -12,10 +12,10 @@ is exceeded. This speeds taking larger photo if motion detected early in scan
 Code is python3 compatible.
 This code is available on github at https://github.com/pageauc/picamera-motion
 
-***Note:*** This is basically sample code to assist development. For a full feature app
-see my pi-timolo repo at https://github.com/pageauc/pi-timolo
+***Note:*** This is sample code to assist development. For a full feature app
+see my pi-timolo GitHub repo at https://github.com/pageauc/pi-timolo
 
-## Install Instructions
+## How To Install
 Log in to RPI using putty ssh or raspberry pi console terminal session
 then Cut and Paste curl command below into RPI console
 

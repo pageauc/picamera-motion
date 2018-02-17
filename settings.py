@@ -4,16 +4,16 @@
 configTitle = "picamera-motion Default Settings"
 configName  = "settings.py"
 
-verbose = True 
+verbose = True  # True= Enable Logging Messages  False= Disable
 
 # User Image Settings
 # -------------------
-imagePath = "images"    # Folder to save the images
+imagePath = "images"    # Folder path to save images
 imageNamePrefix = 'mo-' # Prefix for all image file names. Eg front-
 imageWidth = 1920       # Final image width
 imageHeight = 1080      # Final image height
-imageVFlip = False      # Flip image Vertically
-imageHFlip = False      # Flip image Horizontally
+imageVFlip = True       # Flip image Vertically
+imageHFlip = True       # Flip image Horizontally
 imagePreview = False    # Set picamera preview False=off True=on
 imageNumOn = False      # Image Naming True=Number sequence  False=DateTime
 imageNumStart = 1000    # Start of number sequence if imageNumOn=True
