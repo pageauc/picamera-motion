@@ -1,11 +1,16 @@
 #!/usr/bin/python
 """
- Lightweight Motion Detection using python picamera libraries
- based on code from raspberry pi forum by user utpalc
- modified by Claude Pageau for this working example
- ------------------------------------------------------------
- original code on github https://github.com/pageauc/picamera-motion
- This is sample code that can be used for further development
+ Lightweight Motion Detection using python picamera libraries.
+ Requires a Raspberry Pi computer with a picamera module.  
+ This code is based on a raspberry pi forum post by user utpalc
+ modified by Claude Pageau for this working example.
+
+ This is project can be used for further development 
+ and is located on GitHub at 
+ https://github.com/pageauc/picamera-motion
+ 
+ For a full featured program see my GitHub pi-timolo project at
+ https://github.com/pageauc/pi-timolo
 """
 
 import os
