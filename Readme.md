@@ -55,7 +55,15 @@ Example
 Replace ip address above with a valid entry for your system.  Note multiple
 ip addresses may be displayed by menubox.sh message when you START webserver from menu pick
 To view web page image(s) select a link from right pane web page listing.
-    
+Use browser refresh to update listing. Auto refresh can be enabled in settings.py
+per 
+
+    web_page_refresh_on = True
+    web_page_refresh_sec = "180"  
+
+Default refresh frequency is 180 seconds.  You can change this as required.  Note
+seconds value MUST be in quotes. See other webserver variables per comments.
+
 ## How To Change Settings
 You can edit setting using menubox.sh EDIT menu pick or
 edit settings.py using nano or python IDLE.
