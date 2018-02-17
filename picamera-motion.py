@@ -5,7 +5,7 @@
  This code is based on a raspberry pi forum post by user utpalc
  modified by Claude Pageau for this working example.
 
- This is project can be used for further development
+ This project can be used for further development
  and is located on GitHub at
  https://github.com/pageauc/picamera-motion
 
