@@ -1,23 +1,24 @@
 #!/usr/bin/python
 """
  Lightweight Motion Detection using python picamera libraries.
- Requires a Raspberry Pi computer with a picamera module.  
+ Requires a Raspberry Pi computer with a picamera module.
  This code is based on a raspberry pi forum post by user utpalc
  modified by Claude Pageau for this working example.
 
- This is project can be used for further development 
- and is located on GitHub at 
+ This is project can be used for further development
+ and is located on GitHub at
  https://github.com/pageauc/picamera-motion
- 
+
  For a full featured program see my GitHub pi-timolo project at
  https://github.com/pageauc/pi-timolo
 """
 
 import os
-import picamera
-import picamera.array
 import datetime
 import time
+import picamera
+import picamera.array
+
 try:
     from settings import *
 except ImportError:
@@ -120,6 +121,9 @@ def scan_motion():
 
 #------------------------------------------------------------------------------
 def motion_detection():
+    """ Loop until motion found then take an image,
+        and continue motion detection. ctrl-c to exit
+    """
     current_count = imageNumStart
     while True:
         x, y = scan_motion()
