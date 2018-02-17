@@ -101,7 +101,7 @@ def get_stream_array():
         camera.resolution = (streamWidth, streamHeight)
         with picamera.array.PiRGBArray(camera) as stream:
             camera.vflip = imageVFlip
-            camera.hflip = imageHFlip        
+            camera.hflip = imageHFlip
             camera.exposure_mode = 'auto'
             camera.awb_mode = 'auto'
             camera.capture(stream, format='rgb')
