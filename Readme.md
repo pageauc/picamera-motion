@@ -35,10 +35,19 @@ and/or webserver.py in Background as pi user. (when running PID will be displaye
     ./menubox.sh    
 
 ## How to View Images    
-Use menubox.sh to run webserver menu pick (PID will be displayed).
+Use menubox.sh to START webserver menu pick (PID will be displayed).
 This will run webserver.py as a pi user background task using default 8080 port per settings.py
 Access the web page from a LAN (Local Area Network) computer/device web browser per 
-URL displayed by webserver menu pick message. To view web page image(s) select a link from right pane listing
+URL displayed by webserver menu pick message. 
+
+Example
+
+    http://192.168.1.150:8080
+    
+Replace ip address above with a valid entry for your system.  Note multiple
+ip addresses may be displayed by menubox.sh message when you START webserver from menu pick
+
+To view web page image(s) select a link from right pane listing
     
 ## How To Change Settings
 You can edit setting using menubox.sh EDIT menu pick or

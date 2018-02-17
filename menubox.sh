@@ -69,7 +69,7 @@ function do_webserver ()
         whiptail --msgbox "Failed to Start webserver.py   Please Investigate Problem." 20 70
      else
        myip=$(ifconfig | grep 'inet ' | grep -v 127.0.0 | cut -d " " -f 12 | cut -d ":" -f 2 )
-       myport=$( grep "web_server_port" config.py | cut -d "=" -f 2 | cut -d "#" -f 1 | awk '{$1=$1};1' )
+       myport=$( grep "web_server_port" settings.py | cut -d "=" -f 2 | cut -d "#" -f 1 | awk '{$1=$1};1' )
        whiptail --msgbox --title "Webserver Access" "Access picamera-motion web server from another network computer web browser using url http://$myip:$myport" 15 50
      fi
   else
