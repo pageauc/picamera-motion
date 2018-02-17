@@ -19,8 +19,8 @@ see my pi-timolo GitHub repo at https://github.com/pageauc/pi-timolo
 Log in to RPI using putty ssh or raspberry pi console terminal session.
 Prior to install it is recommended you run
 
-   sudo apt-get update
-   sudo apt-get upgrade
+    sudo apt-get update
+    sudo apt-get upgrade
 
 Cut and Paste curl command below into RPI console/Putty SSH session.
 
