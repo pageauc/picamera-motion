@@ -54,8 +54,7 @@ Example
     
 Replace ip address above with a valid entry for your system.  Note multiple
 ip addresses may be displayed by menubox.sh message when you START webserver from menu pick
-
-To view web page image(s) select a link from right pane listing
+To view web page image(s) select a link from right pane web page listing.
     
 ## How To Change Settings
 You can edit setting using menubox.sh EDIT menu pick or
