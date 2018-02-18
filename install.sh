@@ -6,10 +6,11 @@ mkdir -p picamera-motion
 cd picamera-motion
 mkdir -p images
 echo "INFO  : Install Dependencies ...."
-sudo apt-get install -y python-imaging
-sudo apt-get install -y python-picamera python3-picamera
-sudo apt-get install -y dos2unix
-sudo apt-get install -y pandoc
+sudo apt-get install -yq python-imaging
+sudo apt-get install -yq python-picamera
+sudo apt-get install -yq python3-picamera
+sudo apt-get install -yq dos2unix
+sudo apt-get install -yq pandoc # convert markdown to plain text for Readme.md
 
 echo "INFO  : Download Project Files ..."
 wget -O picamera-motion.py https://raw.github.com/pageauc/picamera-motion/master/picamera-motion.py

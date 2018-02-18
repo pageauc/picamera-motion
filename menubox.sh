@@ -155,13 +155,15 @@ function do_about ()
 function do_main_menu ()
 {
   init_status
+  temp="$(/opt/vc/bin/vcgencmd measure_temp)"
   SELECTION=$(whiptail --title "Main Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --cancel-button Quit --ok-button Select \
   "a $PICAM_1" "$PICAM_2" \
   "b $WEB_1" "$WEB_2" \
   "c SETTINGS" "Edit/View Settings" \
   "d UPGRADE" "Upgrade Files from GitHub.com" \
-  "e HELP" "View Readme.md" \
-  "f ABOUT" "Information about this program" \
+  "e STATUS" "CPU $temp   Select to Refresh" \
+  "f HELP" "View Readme.md" \
+  "g ABOUT" "Information about this program" \
   "q QUIT" "Exit menubox.sh"  3>&1 1>&2 2>&3)
 
   RET=$?
@@ -173,9 +175,11 @@ function do_main_menu ()
       b\ *) do_webserver ;;
       c\ *) do_settings_menu ;;
       d\ *) do_upgrade ;;
-      e\ *) pandoc -f markdown -t plain  Readme.md | more
+      e\ *) clear
+            do_main_menu ;;
+      f\ *) pandoc -f markdown -t plain  Readme.md | more
             do_anykey;;
-      f\ *) do_about ;;
+      g\ *) do_about ;;
       q\ *) clear
             exit 0 ;;
          *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
