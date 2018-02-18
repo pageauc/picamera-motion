@@ -56,7 +56,10 @@ Example
 
 Replace ip address above with a valid entry for your system.  Note multiple
 ip addresses may be displayed by menubox.sh message when you START webserver from menu pick
-To view web page image(s) select a link from right pane web page listing.
+To view web page image(s) select a link from right pane web page listing.   
+
+![Webserver Browser Example](webserver.jpg)
+
 Use browser refresh to update listing. Auto refresh can be enabled in settings.py
 per
 
