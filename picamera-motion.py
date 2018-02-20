@@ -29,15 +29,11 @@ except ImportError:
     print("ERROR : Could Not Import settings.py")
     exit(1)
 
-PROG_VER = "ver 2.3"
+PROG_VER = "ver 2.4"
 PROG_PATH = os.path.abspath(__file__)
 BASE_DIR = PROG_PATH[0:PROG_PATH.rfind("/")+1]
 BASE_FILE_NAME = PROG_PATH[PROG_PATH.rfind("/")+1:PROG_PATH.rfind(".")]
 PROG_NAME = BASE_FILE_NAME
-print("%s %s  written by Claude Pageau" % (PROG_NAME, PROG_VER))
-print("---------------------------------------------")
-if not verbose:
-    print("INFO  : Logging has been disabled per verbose=%s" % verbose)
 
 #------------------------------------------------------------------------------
 def get_now():
@@ -154,13 +150,16 @@ def do_motion_detection():
 
 # Start Main Program Logic
 if __name__ == '__main__':
+    print("%s %s  written by Claude Pageau" % (PROG_NAME, PROG_VER))
+    print("---------------------------------------------")
     check_image_dir(imagePath)
     print("%s INFO  : Scan for Motion "
           "threshold=%i (diff)  sensitivity=%i (num px's)..."
           % (get_now(), threshold, sensitivity))
     if not verbose:
-        print("%s WARN  : Messages turned off per verbose = %s"
+        print("%s WARN  : Messages turned off per settings.py verbose = %s"
               % (get_now(), verbose))
+
     try:
         do_motion_detection()
     except KeyboardInterrupt:
