@@ -16,6 +16,7 @@
 import os
 import datetime
 import time
+import glob
 import picamera
 import picamera.array
 if not os.path.exists('settings.py'):
@@ -29,7 +30,7 @@ except ImportError:
     print("ERROR : Could Not Import settings.py")
     exit(1)
 
-PROG_VER = "ver 2.5"
+PROG_VER = "ver 2.6"
 SCRIPT_PATH = os.path.abspath(__file__)
 # get script file name without extension
 PROG_NAME = SCRIPT_PATH[SCRIPT_PATH.rfind("/")+1:SCRIPT_PATH.rfind(".")]
@@ -63,13 +64,16 @@ def check_image_dir(image_dir):
 def get_file_name(image_dir, image_name_prefix, current_count):
     """
     Create a file name based on settings.py variables
-    Note image numbering will not be saved so restarting
-    will restart image numbering and overwrite previous images.
-    Set imageNumOn=False to save image in datetime format to
-    make image name unique and avoid overwriting previous image.
+    Note image numbering will not be saved but will be inferred from the
+    last image name using get_last_counter() function.
+    If the last image file name is not a number sequence file
+    then numbering will start from imageNumStart variable and may overwrite
+    previous number sequence images. This can happen if you switch between
+    number sequence and datetime sequence in the same folder.
+    or
+    Set imageNumOn=False to save images in datetime format to
+    ensure image name is unique and avoid overwriting previous image(s).
 
-    See pi-timolo.py getCurrentCount function for using glob to
-    extract the most recent number counter from saved images.
     """
     if imageNumOn:
         # you could also use os.path.join to construct image path file_path
@@ -83,8 +87,44 @@ def get_file_name(image_dir, image_name_prefix, current_count):
     return file_path
 
 #------------------------------------------------------------------------------
+def get_last_counter():
+    """
+    glob imagePath for last saved jpg file. Try to extract image counter from
+    filename and convert to integer.  If it fails restart number sequence.
+
+    Note: If the last saved jpg file name is not in number sequence name
+    format (example was in date time naming format) then previous number
+    sequence images will be overwritten.
+
+    Avoid switching back and forth between datetime and number sequences
+    per imageNumOn variable in settings.py
+    """
+    counter = imageNumStart
+    if imageNumOn:
+        image_ext = ".jpg"
+        search_str = imagePath + "/*" + image_ext
+        file_prefix = imagePath + imageNamePrefix
+        try:
+           # Scan image folder for most recent jpg file
+           # and try to extract most recent number counter from file name
+            newest = max(glob.iglob(search_str), key=os.path.getctime)
+            count_str = newest[len(file_prefix)+1:newest.find(image_ext)]
+            print("%s INFO  : Last Saved Image is %s Try to Convert %s"
+                  % (get_now(), newest, count_str))
+            counter = int(count_str)+1
+            print("%s INFO  : Next Image Counter is %i" % (get_now(), counter))
+        except:
+            print("%s WARN  : Restart Numbering at %i "
+                  "WARNING: Previous Files May be Over Written."
+                  % (get_now(), imageNumStart))
+    return counter
+
+#------------------------------------------------------------------------------
 def take_day_image(image_path):
-    """ Take a picamera image """
+    """
+    Take a picamera day image. Note: You may need to increase
+    sleep for low light conditions
+    """
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight)
         # camera.rotation = cameraRotate
@@ -139,13 +179,15 @@ def do_motion_detection():
     Loop until motion found then take an image,
     and continue motion detection. ctrl-c to exit
     """
-    current_count = imageNumStart
+    current_count = get_last_counter()
+    if not imageNumOn:
+        print("%s INFO  : File Naming by Date Time Sequence" % get_now())
     while True:
         x_pos, y_pos = scan_motion()
         file_name = get_file_name(imagePath, imageNamePrefix, current_count)
+        take_day_image(file_name)
         if imageNumOn:
             current_count += 1
-        take_day_image(file_name)
         # Convert xy movement location for full size image
         mo_x = x_pos * X_MO_CONV
         mo_y = y_pos * Y_MO_CONV
