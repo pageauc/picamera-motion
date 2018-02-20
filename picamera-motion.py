@@ -29,11 +29,14 @@ except ImportError:
     print("ERROR : Could Not Import settings.py")
     exit(1)
 
-PROG_VER = "ver 2.4"
-PROG_PATH = os.path.abspath(__file__)
-BASE_DIR = PROG_PATH[0:PROG_PATH.rfind("/")+1]
-BASE_FILE_NAME = PROG_PATH[PROG_PATH.rfind("/")+1:PROG_PATH.rfind(".")]
-PROG_NAME = BASE_FILE_NAME
+PROG_VER = "ver 2.5"
+SCRIPT_PATH = os.path.abspath(__file__)
+# get script file name without extension
+PROG_NAME = SCRIPT_PATH[SCRIPT_PATH.rfind("/")+1:SCRIPT_PATH.rfind(".")]
+SCRIPT_DIR = SCRIPT_PATH[0:SCRIPT_PATH.rfind("/")+1] # get script directory
+# conversion from stream coordinate to full image coordinate
+X_MO_CONV = imageWidth/float(streamWidth)
+Y_MO_CONV = imageHeight/float(streamHeight)
 
 #------------------------------------------------------------------------------
 def get_now():
@@ -94,9 +97,7 @@ def take_day_image(image_path):
         camera.awb_mode = 'auto'
         time.sleep(1)
         camera.capture(image_path)
-    if verbose:
-        print("%s INFO  : takeDayImage (%ix%i) - Saved %s"
-              % (get_now(), imageWidth, imageHeight, image_path))
+        camera.close()
     return image_path
 
 #------------------------------------------------------------------------------
@@ -110,6 +111,7 @@ def get_stream_array():
             camera.exposure_mode = 'auto'
             camera.awb_mode = 'auto'
             camera.capture(stream, format='rgb')
+            camera.close()
             return stream.array
 
 #------------------------------------------------------------------------------
@@ -139,14 +141,18 @@ def do_motion_detection():
     """
     current_count = imageNumStart
     while True:
-        x, y = scan_motion()
-        if verbose:
-            print("%s INFO  : Motion Found At xy(%i,%i) in stream wh(%i,%i)"
-                  % (get_now(), x, y, streamWidth, streamHeight))
+        x_pos, y_pos = scan_motion()
         file_name = get_file_name(imagePath, imageNamePrefix, current_count)
         if imageNumOn:
             current_count += 1
         take_day_image(file_name)
+        # Convert xy movement location for full size image
+        mo_x = x_pos * X_MO_CONV
+        mo_y = y_pos * Y_MO_CONV
+        if verbose:
+            print("%s INFO  : Motion xy(%d,%d) Saved %s (%ix%i)"
+                  % (get_now(), mo_x, mo_y, file_name,
+                     imageWidth, imageHeight,))
 
 # Start Main Program Logic
 if __name__ == '__main__':
@@ -159,7 +165,6 @@ if __name__ == '__main__':
     if not verbose:
         print("%s WARN  : Messages turned off per settings.py verbose = %s"
               % (get_now(), verbose))
-
     try:
         do_motion_detection()
     except KeyboardInterrupt:
