@@ -90,7 +90,7 @@ def get_file_name(image_dir, image_name_prefix, current_count):
 def get_last_counter():
     """
     glob imagePath for last saved jpg file. Try to extract image counter from
-    filename and convert to integer.  If it fails restart number sequence.
+    file name and convert to integer.  If it fails restart number sequence.
 
     Note: If the last saved jpg file name is not in number sequence name
     format (example was in date time naming format) then previous number
@@ -116,7 +116,7 @@ def get_last_counter():
         except:
             print("%s WARN  : Restart Numbering at %i "
                   "WARNING: Previous Files May be Over Written."
-                  % (get_now(), imageNumStart))
+                  % (get_now(), counter))
     return counter
 
 #------------------------------------------------------------------------------
