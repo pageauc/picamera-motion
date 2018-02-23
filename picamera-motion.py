@@ -30,7 +30,7 @@ except ImportError:
     print("ERROR : Could Not Import settings.py")
     exit(1)
 
-PROG_VER = "ver 2.6"
+PROG_VER = "ver 2.7"
 SCRIPT_PATH = os.path.abspath(__file__)
 # get script file name without extension
 PROG_NAME = SCRIPT_PATH[SCRIPT_PATH.rfind("/")+1:SCRIPT_PATH.rfind(".")]
@@ -43,10 +43,9 @@ Y_MO_CONV = imageHeight/float(streamHeight)
 def get_now():
     """ Get datetime and return formatted string"""
     right_now = datetime.datetime.now()
-    now = ("%04d%02d%02d-%02d:%02d:%02d"
-           % (right_now.year, right_now.month, right_now.day,
-              right_now.hour, right_now.minute, right_now.second))
-    return now
+    return ("%04d%02d%02d-%02d:%02d:%02d"
+            % (right_now.year, right_now.month, right_now.day,
+               right_now.hour, right_now.minute, right_now.second))
 
 #------------------------------------------------------------------------------
 def check_image_dir(image_dir):
@@ -103,16 +102,17 @@ def get_last_counter():
     if imageNumOn:
         image_ext = ".jpg"
         search_str = imagePath + "/*" + image_ext
-        file_prefix = imagePath + imageNamePrefix
+        file_prefix_len = len(imagePath + imageNamePrefix)+1
         try:
            # Scan image folder for most recent jpg file
            # and try to extract most recent number counter from file name
             newest = max(glob.iglob(search_str), key=os.path.getctime)
-            count_str = newest[len(file_prefix)+1:newest.find(image_ext)]
+            count_str = newest[file_prefix_len:newest.find(image_ext)]
             print("%s INFO  : Last Saved Image is %s Try to Convert %s"
                   % (get_now(), newest, count_str))
             counter = int(count_str)+1
-            print("%s INFO  : Next Image Counter is %i" % (get_now(), counter))
+            print("%s INFO  : Next Image Counter is %i"
+                  % (get_now(), counter))
         except:
             print("%s WARN  : Restart Numbering at %i "
                   "WARNING: Previous Files May be Over Written."
